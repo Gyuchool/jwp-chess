@@ -1,27 +1,34 @@
 package chess.web.dao;
 
 import chess.domain.board.piece.Piece;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Transactional
-@Sql("/data.sql")
-@SpringBootTest
+@Sql("/schema.sql")
+@JdbcTest
 class PieceDaoTest {
 
     @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     private PieceDao pieceDao;
 
     private final Long boardId = 1L;
 
+    @BeforeEach
+    void setUp(){
+        pieceDao = new PieceDaoImpl(jdbcTemplate);
+    }
     @Test
     @DisplayName("새로운 type과 team으로 바꾸면, db에 저장되고 다시 불러왔을 때 바뀐 type과 team이 나온다.")
     void updatePieceByPosition() {

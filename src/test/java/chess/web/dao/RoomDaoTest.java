@@ -3,27 +3,35 @@ package chess.web.dao;
 import chess.domain.board.Team;
 import chess.domain.board.Turn;
 import chess.domain.entity.Room;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.sql.DataSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Transactional
-@SpringBootTest
-@Sql("/data.sql")
+@JdbcTest
+@Sql("/schema.sql")
 class RoomDaoTest {
 
     @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     private RoomDao roomDao;
 
     private final Long boardId = 1L;
     private static final String TITLE = "제목";
 
+    @BeforeEach
+    void setUp() {
+        roomDao = new RoomDaoImpl(jdbcTemplate);
+    }
     @Test
     @DisplayName("처음 저장된 board가 초기화된 Turn과 동일한지 테스트")
     void findTurnById() {
